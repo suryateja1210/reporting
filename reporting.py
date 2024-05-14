@@ -14,12 +14,34 @@ conn=mysql.connector.connect(
     db='narvee_ATS'
 )
 
-c=conn.cursor()
+# c=conn.cursor()
 
+# def view_all_data():
+#     c.execute('''select vendor,posted_on,job_title,job_location,category_skill,Employment_type from tbl_rec_requirement order by posted_on desc''')
+#     data=c.fetchall()
+#     return data
+
+try:
+    c = conn.cursor()
+except Exception as e:
+    st.error(f"Failed to connect to database: {e}")
+    st.stop()
+
+# Function to view all data
 def view_all_data():
-    c.execute('''select vendor,posted_on,job_title,job_location,category_skill,Employment_type from tbl_rec_requirement order by posted_on desc''')
-    data=c.fetchall()
-    return data
+    try:
+        c.execute('''SELECT vendor, posted_on, job_title, job_location, category_skill, Employment_type 
+                     FROM tbl_rec_requirement 
+                     ORDER BY posted_on DESC''')
+        data = c.fetchall()
+        
+        return data
+    
+    except Exception as e:
+        st.error(f"Failed to execute query: {e}")
+        return []
+
+
 result= view_all_data()
 df=pd.DataFrame(result,columns=['vendor','posted_on','job_title','job_location','category_skill','Employment_type'])
 df['posted_on']=df['posted_on'].str.slice(0,10)
